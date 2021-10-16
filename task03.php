@@ -8,7 +8,7 @@ class Animal
   # method constructor - mengisi data awal
   # parameter: data hewan (array)
 
-  public $animals = [];
+  private $animals = [];
 
   public function __construct($data)
   {
