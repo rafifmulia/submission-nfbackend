@@ -22,6 +22,7 @@ Route::put('/v1/animals/{id}', [AnimalController::class, 'update']);
 Route::delete('/v1/animals/{id}', [AnimalController::class, 'destroy']);
 
 Route::get('/v1/students', [StudentController::class, 'index']);
+Route::get('/v1/students/{id}', [StudentController::class, 'show']);
 Route::post('/v1/students', [StudentController::class, 'store']);
 Route::put('/v1/students/{id}', [StudentController::class, 'update']);
 Route::delete('/v1/students/{id}', [StudentController::class, 'destroy']);

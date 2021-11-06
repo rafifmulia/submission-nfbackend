@@ -30,6 +30,16 @@ class Student extends Model
         return DB::select('SELECT * FROM students WHERE id = ? ;', [$sid]);
     }
 
+    public function checkStudentById($sid)
+    {
+        return DB::select('SELECT id FROM students WHERE id = ? LIMIT 1;', [$sid]);
+    }
+
+    public function checkStudentByNim($nim)
+    {
+        return DB::select('SELECT id FROM students WHERE nim = ?;', [$nim]);
+    }
+
     public function addStudent($data)
     {
         $sid = DB::table('students')->insertGetId($data);
