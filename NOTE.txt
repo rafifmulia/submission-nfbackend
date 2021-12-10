@@ -1,4 +1,0 @@
-Jangan lupa jalanin php artisan migrate --seed, kalau tidak import database
-
-# cara backup db
-mysqldump --column-statistics=0 -h localhost -u root -p -P 3306 -B nflara01 > nflara01.sql
