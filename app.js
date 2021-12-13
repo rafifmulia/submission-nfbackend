@@ -1,27 +1,34 @@
 /**
- * TODO 9:
- * - Import semua method FruitController
- * - Refactor variable ke ES6 Variable
- *
- * @hint - Gunakan Destructing Object
+ * Fungsi untuk menampilkan hasil download
+ * @param {string} result - Nama file yang didownload
  */
+ const showDownload = async (result) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(`Download selesai\nHasil Download: ${result}`);
+    }, 3000);
+  });
+}
 
- const { index, store, update, destroy } = require ('./Controllers/FruitController')
+/**
+ * Fungsi untuk download file
+ * @param {function} callback - Function callback show
+ */
+const download = async () => {
+  try {
+    console.log(`Download dimulai`);
+    const result = `windows-10.exe`;
+    console.log(await showDownload(result));
+  } catch (e) {
+    console.error(`err: ${e}`)
+  }
+}
 
- /**
-  * NOTES:
-  * - Fungsi main tidak perlu diubah
-  * - Jalankan program: nodejs app.js
-  */
- const main = () => {
-   console.log("Method index - Menampilkan Buah");
-   index();
-   console.log("\nMethod store - Menambahkan buah Pisang");
-   store("Pisang");
-   console.log("\nMethod update - Update data 0 menjadi Kelapa");
-   update(0, "Kelapa");
-   console.log("\nMethod destroy - Menghapus data 0");
-   destroy(0);
- };
- 
- main();
+download();
+
+/**
+ * TODO:
+ * - Refactor callback ke Promise atau Async Await
+ * - Refactor function ke ES6 Arrow Function
+ * - Refactor string ke ES6 Template Literals
+ */
