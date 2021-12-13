@@ -20,7 +20,7 @@ const download = async () => {
     const result = `windows-10.exe`;
     console.log(await showDownload(result));
   } catch (e) {
-    console.error(`err: ${e}`)
+    console.error(`err: ${e}`);
   }
 }
 
