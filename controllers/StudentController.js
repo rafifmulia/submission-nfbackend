@@ -1,96 +1,173 @@
-// TODO 3: Import data students dari folder data/students.js
-const students = require('../data/students');
+const Student = require('../models/Student');
 
 class StudentController {
-  index(req, res) {
-    // TODO 4: Tampilkan data students
-    const data = {
-      message: "Menampilkan semua students",
-      data: students,
-    };
-
-    res.status(200).json(data);
-  }
-
-  store(req, res) {
-    const { nama } = req.body;
-
-    // check jika input nama belum diisi
-    if (typeof nama == 'undefined') {
+  async index(req, res) {
+    try {
       const data = {
-        message: `Bad request. field nama is required`,
+        message: "Menampilkan semua students",
+        data: await Student.all(),
       };
   
-      return res.status(400).json(data);  
+      return res.status(200).json(data);
+    } catch (err) {
+      return res.status(500).json({
+        message: "err: " + err.message,
+      })
     }
-
-    // TODO 5: Tambahkan data students
-    students.push({
-      nama,
-    });
-    
-    const data = {
-      message: `Menambahkan data student: ${nama}`,
-      data: students,
-    };
-
-    res.status(201).json(data);
   }
 
-  update(req, res) {
+  async show(req, res) {
+    try {
+      const { id } = req.params;
+      const detailStudent = await Student.show(id);
+
+      // check jika id students tidak ditemukan
+      if (detailStudent.length < 1) {
+        const data = {
+          message: "Student tidak ditemukan",
+        };
+        return res.status(404).json(data);
+      }
+
+      const data = {
+        message: "Menampilkan detail student",
+        data: detailStudent[0],
+      };
+      return res.status(200).json(data);
+    } catch (err) {
+      return res.status(500).json({
+        message: "err: " + err.message,
+      })
+    }
+  }
+
+  async store(req, res) {
+    try {
+      const { name, nim, prodi, address } = req.body;
+
+      // check jika input name belum diisi
+      if (typeof name == 'undefined') {
+        const data = {
+          message: `Bad request. field name is required`,
+        };
+        return res.status(400).json(data);  
+      }
+      // check jika input nim belum diisi
+      if (typeof nim == 'undefined') {
+        const data = {
+          message: `Bad request. field nim is required`,
+        };
+        return res.status(400).json(data);  
+      }
+      // check jika input prodi belum diisi
+      if (typeof prodi == 'undefined') {
+        const data = {
+          message: `Bad request. field prodi is required`,
+        };
+        return res.status(400).json(data);  
+      }
+      // check jika input address belum diisi
+      if (typeof address == 'undefined') {
+        const data = {
+          message: `Bad request. field address is required`,
+        };
+        return res.status(400).json(data);  
+      }
+
+      const dataStudent = {
+        name,
+        nim,
+        prodi,
+        address,
+      };
+      const insertStudent = await Student.create(dataStudent);
+      const detailDataStudent = await Student.show(insertStudent.insertId);
+
+      const data = {
+        message: `Menambahkan data student`,
+        data: detailDataStudent[0],
+      };
+
+      return res.status(201).json(data);
+    } catch (err) {
+      return res.status(500).json({
+        message: "err: " + err.message,
+      })
+    }
+  }
+
+  async update(req, res) {
     const { id } = req.params;
-    const { nama } = req.body;
+    const { name, nim, prodi, address } = req.body;
 
     // check jika id students tidak ditemukan
-    if (typeof students[id] == 'undefined') {
+    const detailStudent = await Student.show(id);
+    if (detailStudent.length < 1) {
       const data = {
-        message: `Student dengan id ${id} tidak ditemukan`,
+        message: "Student tidak ditemukan",
       };
-  
-      return res.status(404).json(data);  
+      return res.status(404).json(data);
     }
 
-    // check jika input nama belum diisi
-    if (typeof nama == 'undefined') {
-      const data = {
-        message: `Bad request. field nama is required`,
-      };
-  
-      return res.status(400).json(data);  
+    // set data yang ingin diupdate
+    const dataStudent = {};
+
+    // check jika input name diisi
+    if (typeof name != 'undefined') {
+      dataStudent.name = name;
+    }
+    // check jika input nim diisi
+    if (typeof nim != 'undefined') {
+      dataStudent.nim = nim;
+    }
+    // check jika input prodi diisi
+    if (typeof prodi != 'undefined') {
+      dataStudent.prodi = prodi;
+    }
+    // check jika input address diisi
+    if (typeof address != 'undefined') {
+      dataStudent.address = address;
     }
 
-    // TODO 6: Update data students
-    students[id].nama = nama
+    // check jika semua field tidak diisi
+    if (Object.keys(dataStudent).length === 0) {
+      const data = {
+        message: "Minimal ada salah 1 input yang akan diupdate",
+      };
+      return res.status(400).json(data);
+    }
+
+    await Student.update(dataStudent, id);
+    const detailDataStudent = await Student.show(id);
     
     const data = {
-      message: `Mengedit student id ${id}, nama ${nama}`,
-      data: students,
+      message: `Mengedit student id`,
+      data: detailDataStudent[0],
     };
 
-    res.status(200).json(data);
+    return res.status(200).json(data);
   }
 
-  destroy(req, res) {
+  async destroy(req, res) {
     const { id } = req.params;
 
     // check jika id students tidak ditemukan
-    if (typeof students[id] == 'undefined') {
+    const detailStudent = await Student.show(id);
+    if (detailStudent.length < 1) {
       const data = {
-        message: `Student dengan id ${id} tidak ditemukan`,
+        message: "Student tidak ditemukan",
       };
-  
-      return res.status(404).json(data);  
+      return res.status(404).json(data);
     }
 
-    // TODO 7: Hapus data students
-    students.splice(id, 1)
+    // delete student
+    await Student.delete(id);
 
     const data = {
-      message: `Menghapus student id ${id}`,
-      data: students,
+      message: `Menghapus student id:${id}`,
     };
 
-    res.status(200).json(data);
+    return res.status(200).json(data);
   }
 }
 

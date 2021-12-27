@@ -1,5 +1,7 @@
 const express = require('express');
 const router = require('./routes/api');
+
+require("dotenv").config();
 const app = express();
 
 // parsing application/json
@@ -19,4 +21,4 @@ app.use(async function (req, res, next) {
 // api
 router.use(app);
 
-app.listen(3005);
+app.listen(process.env.APP_PORT);
